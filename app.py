@@ -4,6 +4,17 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 #TODO: Enter code to create face client
+from azure.cognitiveservices.vision.face import FaceClient 
+from msrest.authentication import CognitiveServicesCredentials 
+
+COGSVCS_KEY = ''
+COGSVCS_CLIENTURL = '' 
+
+credentials = CognitiveServicesCredentials(COGSVCS_KEY)
+client = FaceClient(
+    COGSVCS_CLIENTURL,
+    credentials = credentials
+)
 
 emotions = ['neutral', 'fear','happiness','sadness']
 
@@ -23,6 +34,7 @@ def check_results():
     image = io.BytesIO(image_bytes)
 
     #TODO: Enter code to detect emotion
+    faces = client.face.detect_with_stream(image, return_face_attributes = ['emotion'])
 
     if len(faces) == 1:
         detected_emotion = best_emotion(faces[0].face_attributes.emotion)
